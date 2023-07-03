@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import type { LoginParams } from './type'
+import type { LoginParams, LoginResponse, UserInfoRes } from './type'
 enum API {
     LOGIN_URL = '/user/login',
     USERINFO_URL = '/user/info'
@@ -7,7 +7,7 @@ enum API {
 
 
 // 登录
-export const reqLogin = (data: LoginParams) => request.post(API.LOGIN_URL, data) 
+export const reqLogin = (data: LoginParams) => request.post<any, LoginResponse>(API.LOGIN_URL, data) 
 
 // 用户信息
-export const reqUserInfo = () => request.get(API.USERINFO_URL) 
+export const reqUserInfo = () => request.get<any, UserInfoRes>(API.USERINFO_URL) 
