@@ -15,7 +15,6 @@ import globalComponent from '@/utils/plugins'
 
 import '@/styles/index.scss'
 const app = createApp(App)
-
 app.use(globalComponent)
 app.use(createPinia())
 app.use(router)
