@@ -32,11 +32,12 @@ import { ref, reactive } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { User, Lock } from '@element-plus/icons-vue'
 import { ElNotification } from 'element-plus'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { getTime } from '@/utils/time'
 const loading = ref(false)
 const user = useUserStore()
 const router = useRouter()
+const $route = useRoute()
 const ruleFormRef = ref<InstanceType<typeof ElForm>>() // 可以通过instanceType读取类型
 type formParamsType = {
     username: string,
@@ -82,7 +83,9 @@ const login = async () => {
             title: `${getTime()}好`,
             message: '登录成功！'
         })
-        router.push('/')
+        router.push({
+            path: ($route.query.redirect as string) || '/'
+        })
     } catch (e) {
         // 捕获表单校验的报错
         if (typeof e === 'object') { 
@@ -110,6 +113,7 @@ const login = async () => {
             padding: 20px;
             border-radius: 20px;
             width: 80%;
+            max-width: 500px;
             margin: 0 auto;
             margin-top: 40vh;
             padding-top: 10px;

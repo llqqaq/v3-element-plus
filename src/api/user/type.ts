@@ -25,4 +25,5 @@ interface UserInfoResponseData {
     buttons: string[];
     routes: string[];
     token: string;
+    message?: string;
 }

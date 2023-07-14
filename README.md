@@ -132,6 +132,22 @@ export default [
 
 ```
 
+
+8. 在路由文件中使用pinia
+```js
+
+// 需要将直接注入main.ts的pinia抽取出来 stores/index.ts
+import { createPinia } from 'pinia'
+let pinia = createPinia()
+export default pinia
+
+
+// permission.ts
+import { useUserStore } from '@/stores/user'
+import pinia from '@/stores'
+const user = useUserStore(pinia)  // 将pinia注入
+
+```
 ### 坑
 
 1. 配置elementui国际化的时候打包出错 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
@@ -150,3 +166,25 @@ import zhCn from 'element-plus/dist/locale/zh-cn.mjs' // 配置国际化
     "moduleResolution": "node"
 }
 ```
+
+3. vue-router文档提供的路由过渡没有生效
+```js
+// 失效
+<router-view v-slot="{ Component }">
+    <transition name="fade" appear>
+        <component :is="Component" />
+    </transition>
+</router-view>
+<style lang='scss' scoped>
+.fade-enter-from {
+    opacity: 0;
+}
+.fade-enter-active {
+    transition: all 1s;
+}
+.fade-enter-to {
+    opacity: 1;
+}
+</style>
+```
+原因： 路由组件只写了文本，没有写结构
