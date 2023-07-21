@@ -52,7 +52,7 @@ const handleCommand = async (command: string) => {
     if (command === 'signout') {
         try {
             await ElMessageBox.confirm('确定退出?', '提示')
-            user.userSignOut()
+            await user.userSignOut() 
             $router.push(`/login?redirect=${$route.path}`)
             ElNotification.success('退出成功')
         } catch (error) {

@@ -17,17 +17,14 @@ router.beforeEach(async (to, from, next) => {
             next({ path: '/' })
         } else {
             if (username) {
-                console.log('存在用户信息')
                 next()
             } else {
                 // 获取用户信息
-                console.log('不存在用户信息')
                 try {
                     await user.userInfo()
                     next()
                 } catch (error) {
-                    console.log('获取用户信息失败, 清除token')
-                    user.userSignOut()
+                    await user.userSignOut()
                     next({ path: '/login', query: { redirect: to.path } })
                 }
             }
@@ -46,5 +43,4 @@ router.beforeEach(async (to, from, next) => {
 router.afterEach((to) => {
     document.title = to.meta.title
     nprogress.done()
-    console.log('after')
 }) 

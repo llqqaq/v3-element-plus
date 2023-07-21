@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-card class="box-card">
-            <el-button type="primary" class="add_brand" @click="addBrand" icon="Plus">
+            <el-button type="primary" class="add_brand" @click="dialogVisible = true" icon="Plus">
                 添加品牌
             </el-button>
             <!-- table -->
@@ -30,7 +30,7 @@
                 @size-change="handleSizeChange" @current-change="getBrand" />
         </el-card>
         <!-- 弹窗 -->
-        <el-dialog v-model="dialogVisible" :title="!ruleForm.id ? '添加品牌' : '编辑品牌'" width="50%" @close="dialogClose">
+        <el-dialog v-model="dialogVisible" title="添加品牌" width="50%" @close="dialogClose">
             <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="100px" class="demo-ruleForm"
                 status-icon>
                 <el-form-item label="品牌名称" prop="brandName">
@@ -44,7 +44,7 @@
                         :show-file-list="false"
                         :on-success="handleAvatarSuccess"
                         :before-upload="beforeAvatarUpload">
-                        <img v-if="ruleForm.img" :src="ruleForm.img" class="avatar" />
+                        <img v-if="imageUrl" :src="imageUrl" class="avatar" />
                         <el-icon v-else class="avatar-uploader-icon">
                             <Plus />
                         </el-icon>
@@ -67,11 +67,16 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { getBrandList, deleteBrand, updateOrSaveBrand, uploadImage } from '@/api/goods'
+import axios from 'axios'
 import type { ListItem } from '@/api/goods/type'
+const imageUrl = ref('')
 const currentPage = ref(1)
 const pageSize = ref(5)
 const total = ref(0)
 const dialogVisible = ref(false)
+const fileList = ref([])
+const updateId = ref(0)
+const isUpdae = ref(false)
 const ruleFormRef = ref()
 // 使用reactive声明的数组，直接赋值会失去响应式
 let brandListData = reactive<ListItem[]>([])
@@ -80,26 +85,25 @@ const rules = reactive({
         { required: true, message: '不能为空', trigger: 'blur' }
     ],
     img: [
-        { required: true, message: 'LOGO不能为空' }
+        { required: true, message: 'LOGO不能为空', trigger: 'blur' }
     ]
 })
 const ruleForm = reactive({
-    id: 0,
     brandName: '',
     img: ''
 })
 const deleteItem = async (id: number) => {
+    console.log(id)
     try {
         await ElMessageBox.confirm('确定删除?', '提示')
         const result = await deleteBrand(id)
+        console.log(result)
         if (result.code === 200) {
             ElMessage({
                 showClose: true,
                 message: '删除成功!',
                 type: 'success',
             })
-            // 当前页面只有一条
-            if (brandListData.length === 1 && currentPage.value !== 1) currentPage.value--
             getBrand()
         } else {
             ElMessage({
@@ -127,73 +131,82 @@ const getBrand = async () => {
     }
 }
 const dialogClose = () => {
-    // 关闭弹窗后移除校验
-    ruleFormRef.value.resetFields()
-}
-const addBrand = () => {
-    dialogVisible.value = true
-    ruleForm.id = 0
     ruleForm.brandName = ''
-    ruleForm.img = ''
+    imageUrl.value = ''
 }
 const comfirm = async () => {
-    try {
-        // 校验
-        await ruleFormRef.value.validate()
-        // 上传
+    
+    // update
+    if (isUpdae.value) {
         const result = await updateOrSaveBrand({
-            id: ruleForm.id,
-            tmName: ruleForm.brandName,
-            logoUrl: ruleForm.img
+            id: updateId.value,
+            logoUrl: imageUrl.value,
+            tmName: ruleForm.brandName
         })
-        console.log(result)
         if (result.code === 200) {
-            ElMessage({
-                showClose: true,
-                message: ruleForm.id ? '修改成功' : '添加成功',
-                type: 'success',
-            })
-            dialogVisible.value = false
+            imageUrl.value = ''
+            ruleForm.brandName = ''
             getBrand()
-        } else {
             ElMessage({
                 showClose: true,
-                message: ruleForm.id ? '修改失败' : '添加失败',
-                type: 'error',
+                message: '修改成功'
             })
+            return
         }
-    } catch (error) {}
+        ElMessage({
+            showClose: true,
+            message: result.message,
+            type: 'error'
+        })
+        dialogVisible.value = false
+    } else {
+        ruleFormRef.value.validate(async (valid: boolean) => {
+            if (valid) {
+                console.log('可以上传')
+                const result = await updateOrSaveBrand({
+                    tmName: ruleForm.brandName,
+                    logoUrl: imageUrl.value
+                })
+                console.log(result)
+                if (result.code === 200) {
+                    ElMessage({
+                        showClose: true,
+                        message: '添加成功！'
+                    })
+                    getBrand()
+                    dialogVisible.value = false
+                }
+            }
+        })
+    }
+
+    
 }
 const cancel = () => {
+    console.log('cancel')
     dialogVisible.value = false
 }
 // 自定义上传logo
 const imgUpload = async (data: any) => {
-    const fd = new FormData()
-    fd.append('file', data.file)
-    fd.append('filename', data.filename)
-    try {
-        const result: any = await uploadImage(fd)
-        if (result.code === 200) {
-            // 清除图片的校验
-            ruleFormRef.value.clearValidate('img')
-            return result.data
-        }
-        return Promise.reject('Error: image upload failed')
-    } catch (error) {
-        return Promise.reject('Error: image upload failed')
-    }
+    // 封装FormData对象
+    var formData = new FormData()
+    formData.append("file", data.file)
+    console.log("formData",formData)
+    const result = await uploadImage(formData)
+    return result
 }
 // 修改品牌数据
 const updateItem = async (info: ListItem) => {
-    console.log(info)
-    ruleForm.img = info.logoUrl
-    ruleForm.brandName = info.tmName
-    ruleForm.id = info.id as number
     dialogVisible.value = true
+    isUpdae.value = true
+    updateId.value = info.id as number
+    ruleForm.brandName = info.tmName
+    imageUrl.value = info.logoUrl
 }
 const handleAvatarSuccess = (response, uploadFile) => {
-    ruleForm.img = response
+    console.log(response, uploadFile)
+    imageUrl.value = response.data
+    ruleForm.img = response.data
 }
 
 const beforeAvatarUpload = (rawFile) => {

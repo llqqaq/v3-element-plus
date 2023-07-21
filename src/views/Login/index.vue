@@ -45,7 +45,7 @@ type formParamsType = {
 }
 const formParams = reactive<formParamsType>({
     username: 'admin',
-    password: '111111'
+    password: 'atguigu123'
 })
 const validateName = (rule: any, value: any, callback: any) => {
     if (value.length >= 5) {

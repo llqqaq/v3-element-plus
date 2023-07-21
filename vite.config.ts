@@ -8,8 +8,10 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import { viteMockServe } from 'vite-plugin-mock'
 // https://vitejs.dev/config/
 export default ( { mode, command }: ConfigEnv): UserConfigExport => {
-  console.log(mode, process.env.NODE_ENV)
-  console.log(1111,  loadEnv(mode, process.cwd()))  // 可以读取到变量
+  console.log(mode, process.env.NODE_ENV) // mode可以在package.json中修改，process.env.NODE_ENV不可以修改
+  console.log(loadEnv(mode, process.cwd()))  // 可以读取到变量， process.cwd()读取根目录
+  const env = loadEnv(mode, process.cwd())
+  console.log(env.VITE_APP_BASE_API)
   return defineConfig({
     plugins: [
       vue(),
@@ -34,6 +36,15 @@ export default ( { mode, command }: ConfigEnv): UserConfigExport => {
       preprocessorOptions: {
         scss: {
           additionalData: '@import "./src/styles/variable.scss";'
+        }
+      }
+    },
+    server: {
+      proxy: {
+        '/api': {
+          target: env.VITE_SERVE,
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/api/, '')
         }
       }
     }
