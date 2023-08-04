@@ -110,15 +110,6 @@ export const constantRoute = [
                 component: () => import('@/views/Product/attr/index.vue')
             },
             {
-                path: '/product/sku',
-                name: 'SKU',
-                meta: {
-                    title: 'SKU管理',
-                    icon: 'Orange'
-                },
-                component: () => import('@/views/Product/sku/index.vue')
-            },
-            {
                 path: '/product/spu',
                 name: 'SPU',
                 meta: {
@@ -126,6 +117,15 @@ export const constantRoute = [
                     icon: 'Calendar'
                 },
                 component: () => import('@/views/Product/spu/index.vue')
+            },
+            {
+                path: '/product/sku',
+                name: 'SKU',
+                meta: {
+                    title: 'SKU管理',
+                    icon: 'Orange'
+                },
+                component: () => import('@/views/Product/sku/index.vue')
             }
         ]
     },
