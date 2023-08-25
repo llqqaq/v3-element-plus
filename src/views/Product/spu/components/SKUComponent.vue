@@ -13,15 +13,20 @@
                 <el-input v-model="form.description" :rows="2" type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" placeholder="请你输入描述" />
             </el-form-item>
             <el-form-item label="SPU照片">
-                <el-upload v-model:file-list="fileList" action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-                    list-type="picture-card" :on-preview="handlePictureCardPreview" :on-remove="handleRemove">
+                <el-upload
+                    v-model:file-list="fileList"
+                    list-type="picture-card"
+                    :on-preview="handlePictureCardPreview"
+                    :on-remove="handleRemove"
+                    accept=".png, .jepg, .jep"
+                    :http-request="imgUpload">
                     <el-icon>
                         <Plus />
                     </el-icon>
                 </el-upload>
             </el-form-item>
             <el-form-item label="SPU销售属性">
-                <el-select size="small" placeholder="请你选择品牌">
+                <el-select size="small" :placeholder="lastSpuSaleAttr.length ? '请你选择品牌' : '无数据'">
                     <el-option v-for="item in lastSpuSaleAttr" :key="item.value" :label="item.label" :value="item.value" />
                 </el-select>
                 <el-button class="add_sale_attr" size="small" type="primary" :disabled="true" icon="Plus">添加销售属性</el-button>
@@ -30,7 +35,22 @@
                     <el-table-column label="属性名" prop="saleAttrName"></el-table-column>
                     <el-table-column label="属性值">
                         <template #default="{ row }">
-                            <el-tag v-for="item in row.spuSaleAttrValueList">{{ item.saleAttrValueName }}</el-tag>
+                            <el-tag
+                                style="margin-right: 5px; margin-bottom: 5px;"
+                                closable v-for="(item, index) in row.spuSaleAttrValueList"
+                                @close="handleClose(row.spuSaleAttrValueList, index)">{{ item.saleAttrValueName }}</el-tag>
+                                <el-input
+                                    style="width: 100px;"
+                                    v-if="row.inputShow"
+                                    v-model="tagValue"
+                                    ref="InputRef"
+                                    class="ml-1 w-20"
+                                    size="small"
+                                    autofocus
+                                    @keyup.enter="handleInputConfirm(row)"
+                                    @blur="handleInputConfirm(row)"
+                                />
+                                <el-button v-else class="button-new-tag ml-1" type="primary" size="small" icon="Plus" @click="row.inputShow = true"></el-button>
                         </template>
                     </el-table-column>
                     <el-table-column label="操作">
@@ -40,7 +60,7 @@
                     </el-table-column>
                 </el-table>
                 <div class="btn_box">
-                    <el-button type="primary" size="small" @click="comfirm">保存</el-button>
+                    <el-button type="primary" size="small" @click="comform">保存</el-button>
                     <el-button size="small" @click="cancel">取消</el-button>
                 </div>
             </el-form-item>
@@ -52,7 +72,8 @@
 </template>
 
 <script setup lang='ts'>
-import { ref, reactive, onMounted, watch } from 'vue'
+import { uploadImage } from '@/api/goods'
+import { ref, reactive, onMounted, watch, computed } from 'vue'
 import {
     getTrademarkList,
     getBaseSaleAttrList,
@@ -81,16 +102,17 @@ let form = reactive({
     saleAttr: [],
     description: '',
     tmId: 0,
-    
+
 })
+
+const tagValue = ref('')
 const spuBrand = reactive<SPUBrand[]>([])
 const spuSaleAttr = reactive<SPUBrand[]>([])
-const lastSpuSaleAttr = reactive<SPUBrand[]>([])
 const fileList = reactive<SpuImgList[]>([])
 const $emit = defineEmits(['cancel'])
 const dialogImageUrl = ref('')
 const dialogVisible = ref(false)
-
+const lastSpuSaleAttr = computed(() => spuSaleAttr.filter(i => !form.saleAttr.some(j => i.label === j.saleAttrName)))
 const handleRemove= (uploadFile, uploadFiles) => {
   console.log(uploadFile, uploadFiles)
 }
@@ -125,10 +147,6 @@ const baseSaleAttrList = async () => {
                 label: item.name,
                 value: item.id
             })
-            lastSpuSaleAttr.push({
-                label: item.name,
-                value: item.id
-            })
         })
     }
 }
@@ -151,51 +169,87 @@ const spuSaleAttrList = async (id: number) => {
     console.log('spuSaleAttrList', result)
     if (result.code === 200) {
         result.data.forEach(item => {
+            item.inputShow = false
             form.saleAttr.push(item)
-            // 剔除已经存在的元素
-            let index = lastSpuSaleAttr.findIndex(i => i.label === item.saleAttrName)
-            if (index > -1) {
-                lastSpuSaleAttr.splice(index, 1)
-            }
         })
     }
+}
+// 自定义上传logo
+// 这里上传图片 如果return error ， 图片会自动从fileList删掉，不会手动删
+// 上传成功，fileList存的是本地的url，网络url需要手动收集，fileList有个response，如果是新增的，就有这个值
+const imgUpload = async (data: any) => {
+    const fd = new FormData()
+    fd.append('file', data.file)
+    fd.append('filename', data.filename)
+    try {
+        const result: any = await uploadImage(fd)
+        if (result.code === 200) {
+            console.log(result)
+            return result.data
+        }
+        return Promise.reject('Error: image upload failed')
+    } catch (error) {
+        return Promise.reject('Error: image upload failed')
+    }
+}
+// 删除tag
+const handleClose = (spuSaleAttrValueList: any, index: number) => {
+    spuSaleAttrValueList.splice(index, 1)
+}
+// 添加tag
+const handleInputConfirm = (row: any) => {
+
+    // 这里的回车会触发 回车跟blur两个事件，会执行两次，可以通过下面这样处理
+    // updateData(event) { ... //更新操作},
+    // //回车失去焦点
+    // enterBlur(event) { event.target.blur() }
+
+    // 也可以通过判断tagValue的值不去触发push事件
+    if (tagValue.value) {
+        row.spuSaleAttrValueList.push({
+            saleAttrName: row.saleAttrName,
+            saleAttrValueName: tagValue.value
+        })
+    }
+    tagValue.value = ''
+    row.inputShow = false
 }
 
 // 保存
 const comform = () => {
-    const params = {
-        category3Id: props.category3Id,
-        "description": "string",
-        "id": 0,
-        "tmId": 0,
-        "spuImageList": [
-            {
-            "id": 0,
-            "imgName": "string",
-            "imgUrl": "string",
-            "spuId": 0
-            }
-        ],
-        "spuName": "string",
-        "spuSaleAttrList": [
-            {
-            "baseSaleAttrId": 0,
-            "id": 0,
-            "saleAttrName": "string",
-            "spuId": 0,
-            "spuSaleAttrValueList": [
-                {
-                "baseSaleAttrId": 0,
-                "id": 0,
-                "isChecked": "string",
-                "saleAttrName": "string",
-                "saleAttrValueName": "string",
-                "spuId": 0
-                }
-            ]
-            }
-        ]
-  }
+//     const params = {
+//         category3Id: props.category3Id,
+//         "description": "string",
+//         "id": 0,
+//         "tmId": 0,
+//         "spuImageList": [
+//             {
+//             "id": 0,
+//             "imgName": "string",
+//             "imgUrl": "string",
+//             "spuId": 0
+//             }
+//         ],
+//         "spuName": "string",
+//         "spuSaleAttrList": [
+//             {
+//             "baseSaleAttrId": 0,
+//             "id": 0,
+//             "saleAttrName": "string",
+//             "spuId": 0,
+//             "spuSaleAttrValueList": [
+//                 {
+//                 "baseSaleAttrId": 0,
+//                 "id": 0,
+//                 "isChecked": "string",
+//                 "saleAttrName": "string",
+//                 "saleAttrValueName": "string",
+//                 "spuId": 0
+//                 }
+//             ]
+//             }
+//         ]
+//   }
 }
 
 onMounted(() => {

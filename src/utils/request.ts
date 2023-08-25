@@ -6,13 +6,15 @@ let request = axios.create({
     timeout: 5000
 })
 
-request.interceptors.request.use(config => {
+const fn = config => {
+    console.log('拦截器')
     const user = useUserStore()
     if (user.token) {
         config.headers.token = user.token
     }
     return config
-})
+}
+request.interceptors.request.use(fn)
 
 
 request.interceptors.response.use(responent => {

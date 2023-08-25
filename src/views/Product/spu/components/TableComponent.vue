@@ -32,7 +32,7 @@
           v-show="scenes"
           @cancel="scenes = false"
           :spuInfo="spuInfo"
-          :category3Id="props.ids[2]"></sku-component>
+          :category3Id="props.ids[2] ? props.ids[2] : 0"></sku-component>
     </el-card>
 </template>
 
@@ -47,7 +47,6 @@ const pageSize = ref(9)
 const total = ref(0)
 const scenes = ref(false)
 let spuInfo = reactive({})
-
 const handleSizeChange = (val: number) => {
   currentPage.value = 1
   getSPUFn()

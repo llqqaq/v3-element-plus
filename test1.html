@@ -4,17 +4,26 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#000000">
     <title>Document</title>
-    <style>
-        .img2 {
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-    </style>
 </head>
 <body>
-    <img class="img1" src="./43830306958ec7ec6c0289a0bde557d.png" alt="">
-    <img class="img2" src="./ae04c69df9b23ce5f48efbdffb7131b.png" alt="">
+    <button onclick="addToHomeScreen()">Add to Home Screen</button>
 </body>
 </html>
+<script>
+    function addToHomeScreen() {
+        if (window.navigator && window.navigator['standalone']) {
+            // iOS设备的Safari浏览器
+            alert('请点击“分享”按钮，然后选择“添加到主屏幕”。');
+        } else if (window.matchMedia('(display-mode: standalone)').matches) {
+            // Android设备的Chrome浏览器
+            alert('请点击菜单按钮，然后选择“添加到主屏幕”。');
+        } else {
+            // 其他设备或浏览器
+            alert('请使用浏览器菜单或其他方式将应用程序添加到主屏幕。');
+        }
+    }
+</script>
+</script>

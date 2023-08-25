@@ -33,7 +33,10 @@ router.beforeEach(async (to, from, next) => {
         if (to.path === '/login') {
             console.log('未登录 to login',)
             next()
-        } else {
+        } else if (to.path === '/screen') {
+            next()
+        } 
+        else {
             console.log(`未登录 to ${to.path}`)
             next({ path: '/login', query: { redirect: to.path }})
         }
