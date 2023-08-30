@@ -1,0 +1,32 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden; /* 防止页面滚动 */
+    }
+    iframe {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 50vw;
+      height: 50vh;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <iframe src="../test.html" frameborder="0"></iframe>
+</body>
+</html>

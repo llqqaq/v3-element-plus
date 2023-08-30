@@ -1,72 +1,139 @@
-
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-  </head>
-  <body>
-    <!-- Replace "test" with your own sandbox Business account app client ID -->
-    <script src="https://www.paypal.com/sdk/js?client-id=test&components=buttons,funding-eligibility,marks&vault=true"></script>
-   <!-- Render the radio buttons and marks -->
-<label>
-    <input type="radio" name="payment-option" value="paypal" checked>
-    <div id="paypal-marks-container"></div>
-  </label>
-  
-  <label>
-    <input type="radio" name="payment-option" value="alternate">
-  </label>
-  
-  <div id="paypal-buttons-container"></div>
-  <div id="alternate-button-container">
-    <button>Pay with a different method</button>
-  </div>
-  
-  <script>
-    // Render the PayPal marks
-    paypal.Marks().render('#paypal-marks-container');
-  
-    // Render the PayPal buttons
-    paypal.Buttons().render('#paypal-buttons-container');
-  
-    // Listen for changes to the radio buttons
-    document.querySelectorAll('input[name=payment-option]')
-      .forEach(function (el) {
-        el.addEventListener('change', function (event) {
-  
-          // If PayPal is selected, show the PayPal button
-          if (event.target.value === 'paypal') {
-            document.body.querySelector('#alternate-button-container')
-              .style.display = 'none';
-            document.body.querySelector('#paypal-buttons-container')
-              .style.display = 'block';
-          }
-  
-          // If alternate funding is selected, show a different button
-          if (event.target.value === 'alternate') {
-            document.body.querySelector('#alternate-button-container')
-              .style.display = 'block';
-            document.body.querySelector('#paypal-buttons-container')
-              .style.display = 'none';
-          }
-        });
-      });
-  
-    // Hide non-PayPal button by default
-    document.body.querySelector('#alternate-button-container')
-      .style.display = 'none';
-  </script>
-  </body>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <p>居中</p>
+</body>
+
 </html>
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-  </head>
-  <body>
-    
-  </body>
-  </html>
+<script>
+  const asyncRoute = [
+    {
+      path: '/acl',
+      name: 'Acl',
+      component: () => import('@/Layout/index.vue'),
+      meta: {
+        title: '权限管理',
+        icon: 'Lock'
+      },
+      redirect: '/acl/user',
+      children: [
+        {
+          path: '/acl/user',
+          name: 'User',
+          component: () => import('@/views/acl/user/index.vue'),
+          meta: {
+            title: '用户管理',
+            icon: 'User'
+          }
+        },
+        {
+          path: '/acl/role',
+          name: 'Role',
+          component: () => import('@/views/acl/role/index.vue'),
+          meta: {
+            title: '角色管理',
+            icon: 'UserFilled',
+          }
+        },
+        {
+          path: '/acl/permission',
+          name: 'Permission',
+          component: () => import('@/views/acl/permission/index.vue'),
+          meta: {
+            title: '权限管理',
+            icon: 'Monitor'
+          }
+        }
+      ]
+    },
+    {
+      path: '/product',
+      name: 'Product',
+      component: () => import('@/Layout/index.vue'),
+      meta: {
+        title: '商品管理',
+        icon: 'Goods',
+      },
+      redirect: '/product/trademark',
+      children: [
+        {
+          path: '/product/trademark',
+          name: 'Trademark',
+          meta: {
+            title: '品牌管理',
+            icon: 'ShoppingCartFull'
+          },
+          component: () => import('@/views/Product/trademark/index.vue')
+        },
+        {
+          path: '/product/attr',
+          name: 'Attr',
+          meta: {
+            title: '属性管理',
+            icon: 'ChromeFilled'
+          },
+          component: () => import('@/views/Product/attr/index.vue')
+        },
+        {
+          path: '/product/spu',
+          name: 'SPU',
+          meta: {
+            title: 'SPU管理',
+            icon: 'Calendar'
+          },
+          component: () => import('@/views/Product/spu/index.vue')
+        },
+        {
+          path: '/product/sku',
+          name: 'Sku',
+          meta: {
+            title: 'SKU管理',
+            icon: 'Orange'
+          },
+          children: [
+            {
+              name: 'test'
+            }
+          ],
+          component: () => import('@/views/Product/sku/index.vue')
+        }
+      ]
+    }
+  ]
+
+  const anyRoute = [
+    // 匹配不到转到404
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'Any',
+      meta: {
+        title: '任意路由',
+        icon: 'DeleteFilled',
+        hidden: true
+      },
+      redirect: '/404'
+    }
+  ]
+
+  const guigu333 = ['Product', 'Trademark', 'Sku', 'test' ]
+
+  const filterAsyncRoute = (asyncRoute, routes) => {
+    const result = asyncRoute.filter(item => {
+      if (item.children && item.children.length) {
+        item.children = filterAsyncRoute(item.children, routes)
+      }
+      if (routes.includes(item.name)) return true
+    })
+    return result
+  }
+  console.log(filterAsyncRoute(asyncRoute, guigu333))
+  console.log(asyncRoute)
+</script>

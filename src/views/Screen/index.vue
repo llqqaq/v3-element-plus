@@ -14,7 +14,11 @@
                     <map-component class="map"></map-component>
                     <line-component class="line"></line-component>
                 </div>
-                <div class="r">右</div>
+                <div class="r">
+                    <rank-component class="rank"></rank-component>
+                    <year-component class="year"></year-component>
+                    <counter-component class="rank"></counter-component>
+                </div>
             </div>
         </div>
     </div>
@@ -28,6 +32,10 @@ import AgeComponent from './components/AgeComponent.vue'
 import SexComponent from './components/SexComponent.vue'
 import MapComponent from './components/MapComponent.vue'
 import LineComponent from './components/LineComponent.vue'
+import RankComponent from './components/RankComponent.vue'
+import YearComponent from './components/YearComponent.vue'
+import CounterComponent from './components/CounterComponent.vue'
+
 const screen = ref()
 const callback = () => {
     screen.value.style.transform = `scale(${getScale()}) translate(-50%, -50%)`
@@ -93,6 +101,22 @@ const getScale = (w=1920, h=1080) => {
             }
             .r {
                 flex: 1;
+                display: flex;
+                flex-direction: column;
+                margin-left: 40px;
+
+                .rank {
+                    flex: 1.5;
+                }
+
+                .year {
+                    flex: 1;
+
+                }
+
+                .count {
+                    flex: 1;
+                }
             }
         }
     }

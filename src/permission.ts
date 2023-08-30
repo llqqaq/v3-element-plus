@@ -22,7 +22,8 @@ router.beforeEach(async (to, from, next) => {
                 // 获取用户信息
                 try {
                     await user.userInfo()
-                    next()
+                    // 这里刷新，获取完用户信息后就直接跳转，这样异步路由还没挂载上去，会白屏，所以通过 next({ ...to }),确保挂载后再跳转
+                    next({ ...to })
                 } catch (error) {
                     await user.userSignOut()
                     next({ path: '/login', query: { redirect: to.path } })

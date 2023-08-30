@@ -14,18 +14,19 @@
 
 <script setup lang='ts'>
 import { ref, reactive, watch, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { screenStore } from '@/stores/screen'
 
 const screen = screenStore()
 const $route = useRoute()
-
+const $router = useRouter()
 const toggleExpand = () => {
     screen.isExpand = !screen.isExpand
 }
 
 watch($route, (newV) => {
-    console.log(newV.matched)
+    console.log('newV', newV)
+    console.log($router)
 })
 
 
@@ -36,6 +37,7 @@ watch($route, (newV) => {
     margin-right: 10px;
     cursor: pointer;
 }
+
 .bread_icon {
     transform: translateY(1px);
 }

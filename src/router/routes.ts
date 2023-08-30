@@ -43,6 +43,19 @@ export const constantRoute = [
         }
     },
     {
+        path: '/404',
+        name: '404',
+        meta: {
+            title: '404',
+            icon: 'DeleteFilled',
+            hidden: true
+        },
+        component: () => import('@/views/404/index.vue')
+    }
+]
+
+export const asyncRoute = [
+    {
         path: '/acl',
         name: 'Acl',
         component: () => import('@/Layout/index.vue'),
@@ -111,7 +124,7 @@ export const constantRoute = [
             },
             {
                 path: '/product/spu',
-                name: 'SPU',
+                name: 'Spu',
                 meta: {
                     title: 'SPU管理',
                     icon: 'Calendar'
@@ -120,7 +133,7 @@ export const constantRoute = [
             },
             {
                 path: '/product/sku',
-                name: 'SKU',
+                name: 'Sku',
                 meta: {
                     title: 'SKU管理',
                     icon: 'Orange'
@@ -128,17 +141,10 @@ export const constantRoute = [
                 component: () => import('@/views/Product/sku/index.vue')
             }
         ]
-    },
-    {
-        path: '/404',
-        name: '404',
-        meta: {
-            title: '404',
-            icon: 'DeleteFilled',
-            hidden: true
-        },
-        component: () => import('@/views/404/index.vue')
-    },
+    }
+]
+
+export const anyRoute = [
     // 匹配不到转到404
     {
         path: '/:pathMatch(.*)*',

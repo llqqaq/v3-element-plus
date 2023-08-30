@@ -88,12 +88,12 @@ const login = async () => {
         })
     } catch (e) {
         // 捕获表单校验的报错
-        if (typeof e === 'object') { 
+        if (typeof e === 'object' && e !== null) { 
             return
         }
         // 捕获登录的报错
         loading.value = false
-        ElNotification.error(e as string)
+        ElNotification.error(e as string ? e : 'error')
     }
 }
 </script>
@@ -129,4 +129,5 @@ const login = async () => {
         }
     }
 }
+
 </style>
