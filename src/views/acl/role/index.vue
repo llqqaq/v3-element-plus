@@ -69,7 +69,7 @@ const defaultCheckedKeys = ref([])
 const search = () => {
     getRole()
 }
-const edit = (row) => {
+const edit = (row: any) => {
     console.log(row)
     row.roleName = 'dddddd'
 }
@@ -131,24 +131,24 @@ const data: Tree[] = [
   },
 ]
 const getRole = async () => {
-    const result = await reqAllRole({
+    const result: any = await reqAllRole({
         page: 1,
         limit: 10,
         roleName: roleName.value
     })
     if (result.code === 200) {
         tableData.length = 0
-        result.data.records.forEach(item => tableData.push(item))
+        result.data.records.forEach((item: never) => tableData.push(item))
         console.log('tableData', tableData)
     }
     console.log(tableData)
 }
-const distributePermission = async (row) => {
+const distributePermission = async (row: any) => {
     drawer.value = true
     const result = await reqRoleMenu(row.id)
     console.log('reqRoleMenu', result)
     menuData.length = 0
-    result.data.forEach(item => menuData.push(item))
+    result.data.forEach((item: never) => menuData.push(item))
     // 将选中的节点放入defaultCheckedKeys
     nextTick(() => {
         console.log()
@@ -165,12 +165,12 @@ const confirm = () => {
 
 
 // 遍历找到根节点 并将select选中
-const filterDefaultCheckedKeys = (data, initArr=[]) => {
-    data.forEach(item =>{
+const filterDefaultCheckedKeys = (data: any, initArr=[]) => {
+    data.forEach((item: any) =>{
         if (item.children && item.children.length) {
             filterDefaultCheckedKeys(item.children, initArr)
         } else if (item.select) {
-            initArr.push(item.id)
+            initArr.push((item.id as never))
         }
     })
     return initArr

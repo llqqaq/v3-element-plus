@@ -102,7 +102,7 @@ let form = reactive({
     saleAttr: [],
     description: '',
     tmId: 0,
-
+    spuName: ''
 })
 
 const tagValue = ref('')
@@ -112,12 +112,12 @@ const fileList = reactive<SpuImgList[]>([])
 const $emit = defineEmits(['cancel'])
 const dialogImageUrl = ref('')
 const dialogVisible = ref(false)
-const lastSpuSaleAttr = computed(() => spuSaleAttr.filter(i => !form.saleAttr.some(j => i.label === j.saleAttrName)))
-const handleRemove= (uploadFile, uploadFiles) => {
+const lastSpuSaleAttr = computed(() => spuSaleAttr.filter(i => !form.saleAttr.some(j => i.label === (j as any).saleAttrName)))
+const handleRemove= (uploadFile: any, uploadFiles: any) => {
   console.log(uploadFile, uploadFiles)
 }
 
-const handlePictureCardPreview = (uploadFile) => {
+const handlePictureCardPreview = (uploadFile: any) => {
   dialogImageUrl.value = uploadFile.url!
   dialogVisible.value = true
 }
@@ -127,9 +127,9 @@ const cancel = () => {
 
 // 获取所有品牌
 const trademarkList = async () => {
-    const result = await getTrademarkList()
+    const result: any = await getTrademarkList()
     if (result.code === 200) {
-        result.data.forEach(item => {
+        result.data.forEach((item: any) => {
             spuBrand.push({
                 label: item.tmName,
                 value: item.id
@@ -139,10 +139,10 @@ const trademarkList = async () => {
 }
 // 获取所有销售属性
 const baseSaleAttrList = async () => {
-    const result = await getBaseSaleAttrList()
+    const result: any = await getBaseSaleAttrList()
     console.log(result)
     if (result.code === 200) {
-        result.data.forEach(item => {
+        result.data.forEach((item: any) => {
             spuSaleAttr.push({
                 label: item.name,
                 value: item.id
@@ -155,7 +155,7 @@ const spuImageList = async (id: number) => {
     const result = await getSpuImageList(id)
     console.log('spuImageList', result)
     if (result.code === 200) {
-        result.data.forEach(item => {
+        result.data.forEach((item: any) => {
             fileList.push({
                 name: item.imgName,
                 url: item.imgUrl
@@ -168,8 +168,8 @@ const spuSaleAttrList = async (id: number) => {
     const result = await getSpuSaleAttrList(id)
     console.log('spuSaleAttrList', result)
     if (result.code === 200) {
-        result.data.forEach(item => {
-            item.inputShow = false
+        result.data.forEach((item: never) => {
+            (item as any).inputShow = false
             form.saleAttr.push(item)
         })
     }

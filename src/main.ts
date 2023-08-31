@@ -15,10 +15,13 @@ import 'virtual:svg-icons-register'  // svg插件脚本
 import globalComponent from '@/utils/plugins'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import '@/styles/index.scss'
+
+import isHasBtn from '@/directive/has'
 const app = createApp(App)
 app.use(globalComponent)
 app.use(pinia)
 app.use(router)
+app.use(isHasBtn)
 app.use(ElementPlus, {
     locale: zhCn
 })

@@ -203,13 +203,13 @@ const updateItem = async (info: ListItem) => {
     ruleForm.brandName = info.tmName
     imageUrl.value = info.logoUrl
 }
-const handleAvatarSuccess = (response, uploadFile) => {
+const handleAvatarSuccess = (response: any, uploadFile: any) => {
     console.log(response, uploadFile)
     imageUrl.value = response.data
     ruleForm.img = response.data
 }
 
-const beforeAvatarUpload = (rawFile) => {
+const beforeAvatarUpload = (rawFile: any) => {
     return true
 }
 onMounted(() => {

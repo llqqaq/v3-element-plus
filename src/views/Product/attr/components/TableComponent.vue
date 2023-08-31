@@ -14,7 +14,7 @@
                 <el-table-column prop="attrValue" label="属性名称">
                     <template #default="{ row }">
                         <!-- 使用函数的方式获取元素 -->
-                        <el-input v-if="!row.show" :ref="e => inputRef = e" @blur='comfirmInput(row)' @keyup.enter="comfirmInput(row)" v-model="row.attrValue" placeholder="请您输入属性值名"></el-input>
+                        <el-input v-if="!row.show" :ref="(e: any) => inputRef = e" @blur='comfirmInput(row)' @keyup.enter="comfirmInput(row)" v-model="row.attrValue" placeholder="请您输入属性值名"></el-input>
                         <span @dblclick="dbShow(row)" v-else class="input_value_span">{{ row.attrValue }}</span>
                     </template>
                 </el-table-column>
@@ -91,7 +91,7 @@ const comfirmInput = (row: any) => {
     row.show = true
 }
 // 双击显示
-const dbShow = (row) => {
+const dbShow = (row: any) => {
     row.show = false
     nextTick(() => {
         inputRef.value.focus()

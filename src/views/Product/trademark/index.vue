@@ -192,11 +192,11 @@ const updateItem = async (info: ListItem) => {
     ruleForm.id = info.id as number
     dialogVisible.value = true
 }
-const handleAvatarSuccess = (response, uploadFile) => {
+const handleAvatarSuccess = (response: any, uploadFile: any) => {
     ruleForm.img = response
 }
 
-const beforeAvatarUpload = (rawFile) => {
+const beforeAvatarUpload = (rawFile: any) => {
     return true
 }
 onMounted(() => {

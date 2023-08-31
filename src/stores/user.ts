@@ -24,6 +24,7 @@ export const useUserStore = defineStore('user', () => {
     const route = ref<Route>(constantRoute)
     const avatar = ref<string>('')
     const username = ref<string>('')
+    const btnPermission = ref<string[]>([])
     // 用户登录
     const userLogin = async (data: LoginParams) => {
         const result = await reqLogin(data)
@@ -40,6 +41,7 @@ export const useUserStore = defineStore('user', () => {
         if (result.code === 200) {
             avatar.value = result.data.avatar
             username.value = result.data.name
+            btnPermission.value = result.data.buttons
             const asyncFilterRoute = filterAsyncRoutes(cloneDeep(asyncRoute), result.data.routes)
             const needAddAsync = [ ...asyncFilterRoute, ...anyRoute]
             route.value = [...constantRoute, ...needAddAsync]
@@ -69,6 +71,7 @@ export const useUserStore = defineStore('user', () => {
         route,
         avatar,
         username,
+        btnPermission,
         userLogin,
         userInfo,
         userSignOut

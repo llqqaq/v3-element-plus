@@ -6,7 +6,7 @@ let request = axios.create({
     timeout: 5000
 })
 
-const fn = config => {
+const fn = (config: any) => {
     console.log('拦截器')
     const user = useUserStore()
     if (user.token) {

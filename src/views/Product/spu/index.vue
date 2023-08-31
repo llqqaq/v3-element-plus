@@ -7,8 +7,10 @@
 
 <script setup lang='ts'>
 import { ref, reactive } from 'vue'
+
 import SelectComponent from '@/components/SelectComponent.vue'
 import TableComponent from './components/TableComponent.vue'
+
 const passId = reactive<string[]>([])
 const selectDisabled = ref(false)
 const change = (ids: string[]) => {

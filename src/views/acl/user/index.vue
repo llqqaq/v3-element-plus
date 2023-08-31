@@ -56,7 +56,7 @@
                                 @change="handleCheckedCitiesChange"
                             >
                                 <el-checkbox v-for="item in AllRole" :key="item" :label="item">
-                                {{ item.roleName }}</el-checkbox>
+                                {{ (item as any).roleName }}</el-checkbox>
                             </el-checkbox-group>
                         </el-form-item>
                     </el-form>
@@ -91,11 +91,11 @@ const handleSizeChange = (val: number) => {
 const handleCurrentChange = (val: number) => {
     console.log(`current page: ${val}`)
 }
-const handleSelectionChange = (val) => {
+const handleSelectionChange = (val: any) => {
     console.log(val)
 }
 const getUserList = async () => {
-    const result = await UserList({
+    const result: any = await UserList({
         page: currentPage.value,
         limit: pageSize.value
     })
@@ -106,7 +106,7 @@ const getUserList = async () => {
         console.log('tableData', tableData)
     }
 }
-const distributeRole = async (row) => {
+const distributeRole = async (row: any) => {
     console.log(row)
     drawer1.value = true
     const result = await ToAssign(row.id)
@@ -118,7 +118,7 @@ const handleCheckAllChange = (val: boolean) => {
   checkedCities.value = val ? AllRole.value : []
   isIndeterminate.value = false
 }
-const handleCheckedCitiesChange = (value) => {
+const handleCheckedCitiesChange = (value: any) => {
   console.log(value)
   const checkedCount = value.length
   checkAll.value = checkedCount === AllRole.value.length

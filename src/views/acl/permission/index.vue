@@ -18,10 +18,10 @@ import { ref, reactive, onMounted } from 'vue'
 import { reqPermission } from '@/api/acl/role'
 const tableData = reactive([])
 const getPermission = async () => {
-    const result = await reqPermission()
+    const result: any = await reqPermission()
     console.log(result)
     if (result.code === 200) {
-        result.data.forEach(item => tableData.push(item))
+        result.data.forEach((item: never) => tableData.push(item))
     }
 }
 onMounted(() => {

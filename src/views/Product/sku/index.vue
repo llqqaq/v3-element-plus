@@ -23,7 +23,7 @@ onMounted(() => {
 function updateParentObject() {
     // 模拟父组件改变 parentObject 的过程
     console.log('updateParentObject')
-    parentObject.value = pass; // 会触发子组件的 watch
+    // parentObject.value = pass; // 会触发子组件的 watch
 }
 </script>
   

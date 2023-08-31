@@ -5,7 +5,7 @@
   </template>
   
   <script setup lang="ts">
-  import { watch, ref, defineProps } from 'vue';
+  import { watch, ref } from 'vue';
   
   const props = defineProps(['propObject']);
   

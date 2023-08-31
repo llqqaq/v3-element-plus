@@ -32,7 +32,7 @@ onMounted(() => {
             textStyle: {
                 color: '#fff',
             },
-            formatter: function(params) {
+            formatter: function(params: any) {
                 if (params[0].seriesIndex === 0) {
                     return params[0].name + '：' + params[0].value + '%';
                 }
@@ -63,7 +63,7 @@ onMounted(() => {
                 margin: 80,
                 align: "left",
                 color: '#e5e5e5',
-                formatter: function (value, index) {
+                formatter: function (value: any, index: any) {
                     let ind = index + 1;
                     if (ind == ydata.length) {
                         return "{one|" + "NO." +(ydata.length - index) + "} {a|" + value + "}";

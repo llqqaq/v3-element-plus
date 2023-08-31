@@ -1,7 +1,15 @@
 <template>
     <el-card>
         <div v-show="!scenes">
-            <el-button class="add_spu_btn" type="primary" :disabled="props.ids[2] ? false : true" icon="Plus" size="small" @click="scenes = true">添加SPU</el-button>
+            <!-- 判断btn权限 -->
+            <el-button
+              class="add_spu_btn"
+              type="primary"
+              :disabled="props.ids[2] ? false : true"
+              icon="Plus"
+              size="small"
+              @click="scenes = true"
+              v-has="'btn.Spu.addsku'">添加SPU</el-button>
             <el-table border :data="tableList">
                 <el-table-column type="index" label="序号" align="center" width="70px"></el-table-column>
                 <el-table-column label="SPU名称" prop="spuName"></el-table-column>
@@ -37,10 +45,13 @@
 </template>
 
 <script setup lang='ts'>
+import { useUserStore } from '@/stores/user'
 import { ref, reactive, watch } from 'vue'
 import { getSPU } from '@/api/SKU'
 import SkuComponent from './SKUComponent.vue'
-const props = defineProps(['ids']);
+const user = useUserStore()
+console.log(user)
+const props = defineProps(['ids'])
 const tableList = reactive([])
 const currentPage = ref(1)
 const pageSize = ref(9)
@@ -61,7 +72,7 @@ watch(props.ids , (newV) => {
 })
 const getSPUFn = async (page = 1) => {
   currentPage.value = page
-  const result = await getSPU({
+  const result: any = await getSPU({
     page: currentPage.value,
     limit: pageSize.value,
     id: props.ids[2]
@@ -69,13 +80,13 @@ const getSPUFn = async (page = 1) => {
   if (result.code === 200) {
     total.value = result.data.total
     tableList.length = 0
-    result.data.records.forEach(item => {
+    result.data.records.forEach((item: never) => {
       tableList.push(item)
     })
     console.log('tableList', tableList)
   }
 }
-const edit = row => {
+const edit = (row: any) => {
   spuInfo = row
   scenes.value = true
 }

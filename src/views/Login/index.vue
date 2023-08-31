@@ -93,7 +93,7 @@ const login = async () => {
         }
         // 捕获登录的报错
         loading.value = false
-        ElNotification.error(e as string ? e : 'error')
+        ElNotification.error(e as string)
     }
 }
 </script>
